@@ -446,8 +446,8 @@
         subtitleNotes.style.display = 'block';
       } else {
         currentVideoSubtitles = null;
-        subtitleNotes.style.display = 'none';
-        subtitleNotes.textContent = "";
+        subtitleNotes.style.display = 'block';
+        subtitleNotes.textContent = `Now Playing: ${video.title}`;
       }
     }
 
@@ -466,10 +466,10 @@
       downloadBtn.style.display = 'inline-block';
       downloadBtn.setAttribute('target', '_blank');
       downloadBtn.setAttribute('rel', 'noopener noreferrer');
-      // Hide subtitle notes for YouTube videos
+      // For YouTube videos, show title in subtitle box
       currentVideoSubtitles = null;
-      subtitleNotes.style.display = 'none';
-      subtitleNotes.textContent = "";
+      subtitleNotes.style.display = 'block';
+      subtitleNotes.textContent = `Now Playing: ${title}`;
     }
 
     function loadCustomVideoURL(url) {
@@ -482,8 +482,8 @@
       highlightVideo(-1);
       downloadBtn.style.display = 'none';
       currentVideoSubtitles = null;
-      subtitleNotes.style.display = 'none';
-      subtitleNotes.textContent = "";
+      subtitleNotes.style.display = 'block';
+      subtitleNotes.textContent = `Now Playing: Custom Video`;
     }
 
     function highlightVideo(activeIndex) {
@@ -542,17 +542,17 @@
 
     function updateSubtitles() {
       if (!currentVideoSubtitles || !mainVideo || mainVideo.style.display === 'none') {
-        subtitleNotes.textContent = "";
-        return;
+        return; // Don't change subtitleNotes text if showing title already
       }
 
       const currentTime = mainVideo.currentTime;
       // Find subtitle for current time
       const currentSub = currentVideoSubtitles.find(sub => currentTime >= sub.start && currentTime <= sub.end);
+
       if (currentSub) {
         subtitleNotes.textContent = currentSub.text;
       } else {
-        subtitleNotes.textContent = "";
+        subtitleNotes.textContent = `Now Playing: ${mainVideoTitle.textContent}`;
       }
     }
 
