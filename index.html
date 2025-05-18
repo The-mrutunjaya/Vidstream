@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Minimalist Video Player with YouTube Downloader</title>
+  <title>Minimalist Video Player with YouTube Downloader & Subtitles Notes</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
@@ -125,6 +125,23 @@
       color: #222;
       line-height: 1.2;
       min-height: 28px;
+    }
+
+    .subtitle-notes {
+      margin-top: 12px;
+      max-height: 140px;
+      background: #f4f4f4;
+      color: #222;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 14px;
+      line-height: 1.3;
+      box-shadow: inset 0 0 8px rgba(0,0,0,0.05);
+      overflow-y: auto;
+      white-space: pre-wrap;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      user-select: text;
+      border: 1px solid #ddd;
     }
 
     .download-btn {
@@ -285,6 +302,7 @@
       ></iframe>
       <h2 class="video-title" id="mainVideoTitle">Big Buck Bunny</h2>
       <a href="#" target="_blank" id="downloadBtn" class="download-btn" style="display:none;" rel="noopener noreferrer">Download YouTube Video</a>
+      <div id="subtitleNotes" class="subtitle-notes" aria-live="polite" aria-atomic="true" style="display:none;"></div>
     </section>
 
     <aside class="recommendations" aria-label="Recommended videos list">
@@ -302,128 +320,44 @@
         src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
         thumbnail: "https://peach.blender.org/wp-content/uploads/title_anouncement.jpg?x11217",
         duration: "10:34",
-        type: "local"
+        type: "local",
+        subtitles: [
+          { start: 0, end: 4, text: "A big buck bunny is standing in the forest." },
+          { start: 5, end: 9, text: "He looks happy and curious." },
+          { start: 10, end: 14, text: "Suddenly, two smaller bunnies approach him." },
+          { start: 15, end: 20, text: "They begin to play and chase each other." },
+          { start: 21, end: 30, text: "The forest is alive with sounds of nature." }
+        ]
       },
       {
         title: "Sintel",
         src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4",
         thumbnail: "https://durian.blender.org/wp-content/uploads/2010/05/sintel_post.jpg",
         duration: "14:48",
-        type: "local"
+        type: "local",
+        subtitles: [
+          { start: 0, end: 5, text: "Sintel begins her journey through snowy mountains." },
+          { start: 6, end: 12, text: "She encounters dangers but is determined to find her dragon." },
+          { start: 13, end: 20, text: "She climbs cliffs and crosses rivers, never giving up." }
+        ]
       },
       {
         title: "Tears of Steel",
         src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
         thumbnail: "https://mango.blender.org/wp-content/themes/mango/images/project_media/poster.jpg",
         duration: "12:14",
-        type: "local"
-      },
-      {
-        title: "For Bigger Blazes",
-        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-        thumbnail: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg",
-        duration: "0:30",
-        type: "local"
-      },
-      {
-        title: "Elephants Dream",
-        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-        thumbnail: "https://orange.blender.org/wp-content/themes/orange/images/apple-touch-icon-144x144.png",
-        duration: "10:53",
-        type: "local"
-      },
-      {
-        title: "For Bigger Fun",
-        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
-        thumbnail: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerFun.jpg",
-        duration: "0:30",
-        type: "local"
-      },
-      {
-        title: "Subaru Outback On Street And Dirt",
-        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4",
-        thumbnail: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/SubaruOutbackOnStreetAndDirt.jpg",
-        duration: "0:25",
-        type: "local"
-      },
-      {
-        title: "We Are Going On Bullrun",
-        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4",
-        thumbnail: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/WeAreGoingOnBullrun.jpg",
-        duration: "0:30",
-        type: "local"
-      },
-      {
-        title: "What care can you get for free?",
-        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4",
-        thumbnail: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/VolkswagenGTIReview.jpg",
-        duration: "0:30",
-        type: "local"
-      },
-      {
-        title: "Google Fiber",
-        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/GoogleFiber.mp4",
-        thumbnail: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/GoogleFiber.jpg",
-        duration: "0:30",
-        type: "local"
-      },
-      {
-        title: "For Bigger Joyrides",
-        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
-        thumbnail: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerJoyrides.jpg",
-        duration: "0:30",
-        type: "local"
-      },
-      {
-        title: "Caminandes: Llama Drama",
-        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Caminandes.mp4",
-        thumbnail: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/Caminandes.jpg",
-        duration: "3:39",
-        type: "local"
-      },
-      {
-        title: "Sintel Trailer",
-        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SintelTrailer.mp4",
-        thumbnail: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/SintelTrailer.jpg",
-        duration: "0:47",
-        type: "local"
-      },
-      {
-        title: "Motion Timelapse",
-        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/MotionTimelapse.mp4",
-        thumbnail: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/MotionTimelapse.jpg",
-        duration: "0:20",
-        type: "local"
-      },
-      {
-        title: "Tears of Steel Trailer",
-        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteelTrailer.mp4",
-        thumbnail: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/TearsOfSteelTrailer.jpg",
-        duration: "1:08",
-        type: "local"
-      },
-      {
-        title: "Animation Sample",
-        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Animation.mp4",
-        thumbnail: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/Animation.jpg",
-        duration: "0:15",
-        type: "local"
-      },
-      {
-        title: "Technology Demo",
-        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TechnologyDemo.mp4",
-        thumbnail: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/TechnologyDemo.jpg",
-        duration: "0:30",
-        type: "local"
-      },
-      {
-        title: "Miniature Timelapse",
-        src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/MiniatureTimelapse.mp4",
-        thumbnail: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/MiniatureTimelapse.jpg",
-        duration: "0:20",
-        type: "local"
-      },
-      // Add sample YouTube videos
+        type: "local",
+        subtitles: [
+          { start: 0, end: 6, text: "In a futuristic city, heroes face overwhelming odds." },
+          { start: 7, end: 13, text: "Technology and emotions intertwine in a gripping tale." },
+          { start: 14, end: 25, text: "Friendship and sacrifice define their struggles." }
+        ]
+      }
+      // Other videos do not have subtitles in this demo
+    ];
+
+    // Add sample YouTube videos (no subtitles support)
+    videos.push(
       {
         title: "Rick Astley - Never Gonna Give You Up",
         src: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
@@ -438,19 +372,21 @@
         duration: "10:34",
         type: "youtube"
       }
-    ];
+    );
 
     const mainVideo = document.getElementById('mainVideo');
     const youtubePlayer = document.getElementById('youtubePlayer');
     const mainVideoTitle = document.getElementById('mainVideoTitle');
     const downloadBtn = document.getElementById('downloadBtn');
+    const subtitleNotes = document.getElementById('subtitleNotes');
 
     const videoListContainer = document.getElementById('videoList');
     const searchInput = document.getElementById('searchInput');
     const searchForm = document.getElementById('searchForm');
 
+    let currentVideoSubtitles = null;
+
     function extractYouTubeVideoID(url) {
-      // Handles multiple YouTube URL formats
       try {
         const u = new URL(url);
         if (u.hostname === 'youtu.be') {
@@ -488,6 +424,9 @@
       youtubePlayer.src = '';
       downloadBtn.style.display = 'none';
       downloadBtn.href = '#';
+      subtitleNotes.style.display = 'none';
+      subtitleNotes.textContent = "";
+      currentVideoSubtitles = null;
     }
 
     function loadLocalVideo(index) {
@@ -501,6 +440,15 @@
       mainVideoTitle.textContent = video.title;
       highlightVideo(index);
       downloadBtn.style.display = 'none';
+      // Setup subtitles if any
+      if (video.subtitles && video.subtitles.length > 0) {
+        currentVideoSubtitles = video.subtitles;
+        subtitleNotes.style.display = 'block';
+      } else {
+        currentVideoSubtitles = null;
+        subtitleNotes.style.display = 'none';
+        subtitleNotes.textContent = "";
+      }
     }
 
     function loadYouTubeVideo(url, title = "YouTube Video") {
@@ -514,11 +462,14 @@
       youtubePlayer.style.display = 'block';
       mainVideoTitle.textContent = title;
       highlightVideo(-1);
-      // Set download button link to e.g. y2mate
       downloadBtn.href = `https://www.y2mate.com/youtube/${videoID}`;
       downloadBtn.style.display = 'inline-block';
       downloadBtn.setAttribute('target', '_blank');
       downloadBtn.setAttribute('rel', 'noopener noreferrer');
+      // Hide subtitle notes for YouTube videos
+      currentVideoSubtitles = null;
+      subtitleNotes.style.display = 'none';
+      subtitleNotes.textContent = "";
     }
 
     function loadCustomVideoURL(url) {
@@ -530,6 +481,9 @@
       mainVideoTitle.textContent = "Custom Video";
       highlightVideo(-1);
       downloadBtn.style.display = 'none';
+      currentVideoSubtitles = null;
+      subtitleNotes.style.display = 'none';
+      subtitleNotes.textContent = "";
     }
 
     function highlightVideo(activeIndex) {
@@ -586,6 +540,31 @@
       return videos.filter(v => v.title.toLowerCase().includes(lower));
     }
 
+    function updateSubtitles() {
+      if (!currentVideoSubtitles || !mainVideo || mainVideo.style.display === 'none') {
+        subtitleNotes.textContent = "";
+        return;
+      }
+
+      const currentTime = mainVideo.currentTime;
+      // Find subtitle for current time
+      const currentSub = currentVideoSubtitles.find(sub => currentTime >= sub.start && currentTime <= sub.end);
+      if (currentSub) {
+        subtitleNotes.textContent = currentSub.text;
+      } else {
+        subtitleNotes.textContent = "";
+      }
+    }
+
+    mainVideo.addEventListener('timeupdate', updateSubtitles);
+    mainVideo.addEventListener('pause', () => {
+      // Optionally clear subtitle or leave it
+      // subtitleNotes.textContent = "";
+    });
+    mainVideo.addEventListener('ended', () => {
+      subtitleNotes.textContent = "";
+    });
+
     searchForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const term = searchInput.value.trim();
@@ -593,11 +572,9 @@
         renderVideoList(videos);
         loadLocalVideo(0);
       } else if (isYouTubeURL(term)) {
-        // If YouTube URL
         loadYouTubeVideo(term, "YouTube Video");
-        renderVideoList(videos); // keep list the same
+        renderVideoList(videos);
       } else if (isValidLocalVideoURL(term)) {
-        // Direct video link supported by video element
         loadCustomVideoURL(term);
         renderVideoList(videos);
       } else {
@@ -612,6 +589,8 @@
         } else {
           clearPlayers();
           mainVideoTitle.textContent = "No video found";
+          subtitleNotes.textContent = "";
+          subtitleNotes.style.display = 'none';
         }
       }
     });
@@ -622,4 +601,3 @@
   </script>
 </body>
 </html>
-
