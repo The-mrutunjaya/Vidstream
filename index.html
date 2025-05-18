@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Minimalist Video Player with YouTube Downloader & Subtitles Notes</title>
+  <title>Minimalist Video Player with YouTube Downloader & Subtitles & Scene Recognition</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
@@ -303,6 +303,8 @@
       <h2 class="video-title" id="mainVideoTitle">Big Buck Bunny</h2>
       <a href="#" target="_blank" id="downloadBtn" class="download-btn" style="display:none;" rel="noopener noreferrer">Download YouTube Video</a>
       <div id="subtitleNotes" class="subtitle-notes" aria-live="polite" aria-atomic="true" style="display:none;"></div>
+      <!-- Hidden canvas for frame capture -->
+      <canvas id="hiddenCanvas" style="display:none;"></canvas>
     </section>
 
     <aside class="recommendations" aria-label="Recommended videos list">
@@ -312,6 +314,10 @@
       </div>
     </aside>
   </main>
+
+  <!-- TensorFlow.js and COCO-SSD model -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.3.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.2/dist/coco-ssd.min.js"></script>
 
   <script>
     const videos = [
@@ -379,12 +385,24 @@
     const mainVideoTitle = document.getElementById('mainVideoTitle');
     const downloadBtn = document.getElementById('downloadBtn');
     const subtitleNotes = document.getElementById('subtitleNotes');
-
+    const hiddenCanvas = document.getElementById('hiddenCanvas');
     const videoListContainer = document.getElementById('videoList');
     const searchInput = document.getElementById('searchInput');
     const searchForm = document.getElementById('searchForm');
 
     let currentVideoSubtitles = null;
+    let model = null;
+    let detectionInterval = null;
+
+    // Load the COCO-SSD model asynchronously
+    cocoSsd.load().then((loadedModel) => {
+      model = loadedModel;
+      console.log("Object detection model loaded.");
+      // Start detection if a video is playing on load
+      if(mainVideo.style.display !== 'none' && !currentVideoSubtitles) {
+        startDetection();
+      }
+    });
 
     function extractYouTubeVideoID(url) {
       try {
@@ -427,6 +445,7 @@
       subtitleNotes.style.display = 'none';
       subtitleNotes.textContent = "";
       currentVideoSubtitles = null;
+      stopDetection();
     }
 
     function loadLocalVideo(index) {
@@ -440,14 +459,17 @@
       mainVideoTitle.textContent = video.title;
       highlightVideo(index);
       downloadBtn.style.display = 'none';
-      // Setup subtitles if any
+
       if (video.subtitles && video.subtitles.length > 0) {
         currentVideoSubtitles = video.subtitles;
         subtitleNotes.style.display = 'block';
+        subtitleNotes.textContent = "";
+        stopDetection();
       } else {
         currentVideoSubtitles = null;
         subtitleNotes.style.display = 'block';
-        subtitleNotes.textContent = `Now Playing: ${video.title}`;
+        subtitleNotes.textContent = "Recognizing content...";
+        if (model) startDetection();
       }
     }
 
@@ -466,10 +488,10 @@
       downloadBtn.style.display = 'inline-block';
       downloadBtn.setAttribute('target', '_blank');
       downloadBtn.setAttribute('rel', 'noopener noreferrer');
-      // For YouTube videos, show title in subtitle box
       currentVideoSubtitles = null;
       subtitleNotes.style.display = 'block';
       subtitleNotes.textContent = `Now Playing: ${title}`;
+      stopDetection();
     }
 
     function loadCustomVideoURL(url) {
@@ -483,7 +505,8 @@
       downloadBtn.style.display = 'none';
       currentVideoSubtitles = null;
       subtitleNotes.style.display = 'block';
-      subtitleNotes.textContent = `Now Playing: Custom Video`;
+      subtitleNotes.textContent = "Recognizing content...";
+      if (model) startDetection();
     }
 
     function highlightVideo(activeIndex) {
@@ -542,7 +565,7 @@
 
     function updateSubtitles() {
       if (!currentVideoSubtitles || !mainVideo || mainVideo.style.display === 'none') {
-        return; // Don't change subtitleNotes text if showing title already
+        return;
       }
 
       const currentTime = mainVideo.currentTime;
@@ -551,18 +574,62 @@
 
       if (currentSub) {
         subtitleNotes.textContent = currentSub.text;
+        stopDetection(); // Stop detection while subtitles exist
       } else {
-        subtitleNotes.textContent = `Now Playing: ${mainVideoTitle.textContent}`;
+        subtitleNotes.textContent = `Recognizing content...`;
+        if (model && detectionInterval === null) {
+          startDetection();
+        }
+      }
+    }
+
+    // Capture video frames and run detection every 2 seconds
+    function startDetection() {
+      if (!model || detectionInterval !== null || mainVideo.style.display === 'none') return;
+      
+      const ctx = hiddenCanvas.getContext('2d');
+      hiddenCanvas.width = mainVideo.videoWidth;
+      hiddenCanvas.height = mainVideo.videoHeight;
+
+      detectionInterval = setInterval(async () => {
+        try {
+          ctx.drawImage(mainVideo, 0, 0, hiddenCanvas.width, hiddenCanvas.height);
+          const predictions = await model.detect(hiddenCanvas);
+
+          if (predictions.length === 0) {
+            subtitleNotes.textContent = "No objects detected.";
+          } else {
+            // Extract top objects with confidence > 0.5
+            const filtered = predictions.filter(p => p.score > 0.5);
+            if (filtered.length === 0) {
+              subtitleNotes.textContent = "No confident objects detected.";
+            } else {
+              const names = filtered.map(obj => obj.class);
+              // Build text: "Detected: dog, person, cat"
+              subtitleNotes.textContent = "Recognized: " + [...new Set(names)].join(", ");
+            }
+          }
+        } catch (error) {
+          console.error('Detection error:', error);
+          subtitleNotes.textContent = "Recognition error.";
+        }
+      }, 2000);
+    }
+
+    function stopDetection() {
+      if (detectionInterval !== null) {
+        clearInterval(detectionInterval);
+        detectionInterval = null;
       }
     }
 
     mainVideo.addEventListener('timeupdate', updateSubtitles);
     mainVideo.addEventListener('pause', () => {
       // Optionally clear subtitle or leave it
-      // subtitleNotes.textContent = "";
     });
     mainVideo.addEventListener('ended', () => {
       subtitleNotes.textContent = "";
+      stopDetection();
     });
 
     searchForm.addEventListener('submit', (e) => {
@@ -591,6 +658,7 @@
           mainVideoTitle.textContent = "No video found";
           subtitleNotes.textContent = "";
           subtitleNotes.style.display = 'none';
+          stopDetection();
         }
       }
     });
